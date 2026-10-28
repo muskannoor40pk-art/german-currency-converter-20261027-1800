@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Währungsrechner</title>
+    
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="converter-card">
+    <h1>Währungsrechner</h1>
+    
+    <div class="group">
+        <label for="amount">Betrag</label>
+        <input type="number" id="amount" value="1.00" step="0.01">
+    </div>
+
+    <div class="group">
+        <label for="from">Von</label>
+        <select id="from">
+            <option value="EUR">EUR - Euro</option>
+            <option value="USD">USD - US Dollar</option>
+            <option value="GBP">GBP - Britisches Pfund</option>
+            <option value="CHF">CHF - Schweizer Franken</option>
+        </select>
+    </div>
+
+    <div class="swap-container">
+        <button class="swap-btn" id="swap" aria-label="Währungen tauschen">⇅</button>
+    </div>
+
+    <div class="group">
+        <label for="to">Zu</label>
+        <select id="to">
+            <option value="USD">USD - US Dollar</option>
+            <option value="EUR" selected>EUR - Euro</option>
+            <option value="GBP">GBP - Britisches Pfund</option>
+            <option value="CHF">CHF - Schweizer Franken</option>
+        </select>
+    </div>
+
+    <div class="result" id="result">
+        0.00
+    </div>
+</div>
+
+<script>
+    const rates = {
+        EUR: { USD: 1.08, GBP: 0.85, CHF: 0.97, EUR: 1 },
+        USD: { EUR: 0.92, GBP: 0.79, CHF: 0.90, USD: 1 },
+        GBP: { EUR: 1.17, USD: 1.27, CHF: 1.14, GBP: 1 },
+        CHF: { EUR: 1.03, USD: 1.11, GBP: 0.88, CHF: 1 }
+    };
+
+    const amountInput = document.getElementById('amount');
+    const fromSelect = document.getElementById('from');
+    const toSelect = document.getElementById('to');
+    const swapBtn = document.getElementById('swap');
+    const resultDisplay = document.getElementById('result');
+
+    function convert() {
+        const amount = parseFloat(amountInput.value);
+        const from = fromSelect.value;
+        const to = toSelect.value;
+        
+        const rate = rates[from][to];
+        const converted = amount * rate;
+        
+        resultDisplay.textContent = new Intl.NumberFormat('de-DE', { 
+            style: 'currency', 
+            currency: to 
+        }).format(converted);
+    }
+
+    swapBtn.addEventListener('click', () => {
+        const temp = fromSelect.value;
+        fromSelect.value = toSelect.value;
+        toSelect.value = temp;
+        convert();
+    });
+
+    [amountInput, fromSelect, toSelect].forEach(el => {
+        el.addEventListener('input', convert);
+    });
+
+    convert();
+</script>
+
+</body>
+</html>
